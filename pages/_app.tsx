@@ -1,11 +1,13 @@
 import Head from 'next/head';
+
 import { ChakraProvider } from '@chakra-ui/react';
+
 // import { noSSR } from 'next/dynamic';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 // import { setTelemetry, useTelemetry } from '../hooks/useTelemetry';
-
 import './style.css';
+
 // import type { BrowserMetricsProvider } from '../lib/types';
 
 /**
@@ -14,7 +16,7 @@ import './style.css';
  * Also, Next.js expects all dynamic imports to return react components, but we're not getting react components from
  * ignite-metrics here; hence the 'ts-expect-error'.
  */
-// @ts-expect-error
+
 // const igniteMetricsModulePromise: Promise<{BrowserMetricsProvider: BrowserMetricsProvider}> = noSSR(() => import('@ipfs-shipyard/ignite-metrics/browser-vanilla'), {})
 
 function App({ Component, pageProps }) {
