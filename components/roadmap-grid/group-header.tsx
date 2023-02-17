@@ -20,10 +20,12 @@ export function GroupHeader({ group, issueDataState }: GroupHeaderProps) {
   let groupNameElement: JSX.Element | null = null;
   const issueData: Parameters<typeof getLinkForRoadmapChild>[0]['issueData'] = {
     html_url: group.url.value.replace('/roadmap/', ''),
+    // @ts-ignore
     children: group.items.value,
   };
   if (viewMode === ViewMode.Detail) {
     if (isEmpty(group.url)) {
+      // @ts-ignore
       groupNameElement = <Text color="black">{group.groupName.value}</Text>
     } else {
       const groupHeaderLink = getLinkForRoadmapChild({

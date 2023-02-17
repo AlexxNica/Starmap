@@ -38,6 +38,7 @@ export function RoadmapDetailed({ issueDataState }: IssueDataViewInput) {
   const router = useRouter();
 
   const issuesGroupedState = useHookstate<DetailedViewGroup[]>([]);
+  // @ts-ignore
   const groupedIssuesId = getUniqIdForGroupedIssues(issuesGroupedState.value);
   const groupedIssuesIdPrev = usePrevious(groupedIssuesId);
   const query = router.query;
@@ -136,6 +137,7 @@ export function RoadmapDetailed({ issueDataState }: IssueDataViewInput) {
         console.warn('Found an invalid group: ', g.value);
       });
     }
+    // @ts-ignore
     return <Spinner />;
   }
 

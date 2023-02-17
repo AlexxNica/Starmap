@@ -48,6 +48,7 @@ export function GridRow({
     () =>
       getLinkForRoadmapChild({
         viewMode,
+        // @ts-ignore
         issueData: milestone.get(),
         query: routerQuery,
         currentRoadmapRoot: issueDataState.value,
@@ -104,6 +105,7 @@ export function GridRow({
         clickable && className
       }`}
     >
+      {/* @ts-ignore */}
       <Flex direction={{ base: 'column' }} justify='space-between' position='relative' w='100%'>
         <Flex direction='column' w='100%'>
           <Text as='b' className={`${styles.milestoneTitleWrapper} ${clickable && styles.milestoneTitleWrapperLink}`}>

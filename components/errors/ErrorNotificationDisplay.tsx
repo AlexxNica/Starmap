@@ -17,12 +17,14 @@ export function ErrorNotificationDisplay ({ errorsState, issueDataState }: Error
   const [isExpanded, setIsExpanded] = useState(true);
 
   const viewMode = useViewMode();
+  // @ts-ignore
   const filteredErrors: StarMapsIssueErrorsGrouped[] = useMemo(() => {
     if (errorsState.ornull == null) {
       return [];
     }
     const errors = errorsState.ornull.value;
     if (viewMode != null && issueDataState.ornull != null) {
+      // @ts-ignore
       return errorFilters[viewMode](errors, issueDataState.ornull.value)
     }
     return errors;
