@@ -15,7 +15,7 @@ export function addToChildren(
       parentDueDate = getDueDate(parentAsGhIssueData, errorManager).eta
     }
     const parentParsed: IssueData['parent'] = {
-      state: parent.state,
+      state: parent.state || null,
       group: parent.group,
       title: parent.title,
       html_url: parent.html_url,
@@ -31,7 +31,7 @@ export function addToChildren(
       html_url: item.html_url,
       group: item.group,
       title: item.title,
-      state: item.state,
+      state: item.state || null,
       node_id: item.node_id,
       parent: parentParsed,
       children: addToChildren(item.children, item, errorManager),

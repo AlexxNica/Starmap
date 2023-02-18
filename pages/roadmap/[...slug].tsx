@@ -18,7 +18,7 @@ import { setViewMode } from '../../hooks/useViewMode';
 import getRoadmap from '../../lib/backend/roadmap';
 import { assignCompletionRateToIssues } from '../../lib/calculateCompletionRate';
 import { DateGranularityState, RoadmapMode, ViewMode } from '../../lib/enums';
-import { findIssueDataByUrl } from '../../lib/findIssueDataByUrl';
+// import { findIssueDataByUrl } from '../../lib/findIssueDataByUrl';
 import { mergeStarMapsErrorGroups } from '../../lib/mergeStarMapsErrorGroups';
 import { paramsFromUrl } from '../../lib/paramsFromUrl';
 import {
@@ -39,6 +39,10 @@ export async function getServerSideProps(context): Promise<RoadmapServerSideProp
   const [_hostname, owner, repo, _, issue_number] = context.query.slug;
   const { filter_group, mode, timeUnit }: QueryParameters = context.query;
 
+  const apiResult = await getRoadmap({ owner, repo, issue_number });
+  const roadmapResponse: RoadmapApiResponse = apiResult;
+  console.log('roadmapResponse:', roadmapResponse);
+
   return {
     props: {
       owner,
@@ -49,6 +53,8 @@ export async function getServerSideProps(context): Promise<RoadmapServerSideProp
       mode: mode || RoadmapMode.grid,
       dateGranularity: timeUnit || DateGranularityState.Months,
       baseUrl: `${BASE_PROTOCOL}://${process.env.VERCEL_URL}`,
+      //@ts-ignore
+      roadmapData: roadmapResponse,
     },
   };
 }
@@ -79,8 +85,9 @@ export default function RoadmapPage(props: InferGetServerSidePropsType<typeof ge
         // const apiResult = await fetch(new URL(roadmapApiUrl), { signal: controller.signal });
         // const roadmapResponse: RoadmapApiResponse = await apiResult.json();
 
-        const apiResult = await getRoadmap({ owner, repo, issue_number });
-        const roadmapResponse: RoadmapApiResponse = await apiResult;
+        // @ts-ignore
+        const apiResult = props.roadmapData;
+        const roadmapResponse: RoadmapApiResponse = apiResult;
 
         const roadmapResponseSuccess = roadmapResponse as RoadmapApiResponseSuccess;
         const roadmapResponseFailure = roadmapResponse as RoadmapApiResponseFailure;
@@ -131,24 +138,10 @@ export default function RoadmapPage(props: InferGetServerSidePropsType<typeof ge
       setIsPendingChildrenLoading(true);
 
       const { issue_number, owner, repo } = paramsFromUrl(typedPendingChild.html_url.value);
-      const requestBody = {
-        issue_number,
-        owner,
-        repo,
-        parent: findIssueDataByUrl(issueDataState.get() as IssueData, typedPendingChild.parentHtmlUrl.value),
-      };
-      const pendingChildApiUrl = new URL(`${window.location.origin}/api/pendingChild`);
 
       try {
-        const apiResult = await fetch(pendingChildApiUrl, {
-          signal: controller.signal,
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-        });
-        const pendingChildResponse: PendingChildApiResponse = await apiResult.json();
+        const apiResult = await getRoadmap({ owner, repo, issue_number });
+        const pendingChildResponse: PendingChildApiResponse = apiResult;
         const pendingChildFailure = pendingChildResponse as PendingChildApiResponseFailure;
         const pendingChildSuccess = pendingChildResponse as PendingChildApiResponseSuccess;
         if (pendingChildFailure.error != null) {
@@ -164,8 +157,8 @@ export default function RoadmapPage(props: InferGetServerSidePropsType<typeof ge
       } catch (err) {
         if (!(err as Error).toString().includes('AbortError')) {
           roadmapLoadErrorState.set({
-            code: `Error fetching ${pendingChildApiUrl}`,
-            message: `Error fetching ${pendingChildApiUrl}: ${(err as Error).toString()}`,
+            code: `Error fetching roadmap children`,
+            message: `Error fetching roadmap children: ${(err as Error).toString()}`,
           });
         }
       }
